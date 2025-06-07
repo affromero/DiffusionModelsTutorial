@@ -190,10 +190,7 @@ repos:
           - id: uv-lock
             stages: [pre-commit, pre-merge-commit, pre-push] # not run during manual. manual is run in Github, and this one is expensive
           - id: uv-export
-            args: [--frozen, --extra=cu121, --output-file=requirements_cu121.txt, --no-hashes]
-            stages: [pre-commit, pre-merge-commit, pre-push]
-          - id: uv-export
-            args: [--frozen, --extra=cpu, --output-file=requirements_cpu.txt, --no-hashes]
+            args: [--frozen, --output-file=requirements.txt, --no-hashes]
             stages: [pre-commit, pre-merge-commit, pre-push]
 
     # - repo: https://github.com/oxsecurity/megalinter # sudo apt install npm && sudo npm install mega-linter-runner -g
