@@ -157,6 +157,7 @@ class Config:
     model_dir: str = "outputs/models"
     sample_dir: str = "outputs/samples"
     log_dir: str = "outputs/logs"
+    sds_inpaint_dir: str = "outputs/sds_inpaint"
 
     def save_pkl(self) -> None:
         """Save config to pkl file."""

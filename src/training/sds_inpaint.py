@@ -226,7 +226,7 @@ def run_task(model_path: str = "outputs/models/best_model.pth") -> torch.Tensor:
     image_masked = gt_image * (1 - mask) + mask * (-1)
 
     # Define save path and ensure directory exists
-    save_path = Path("outputs/sds_inpaint/log.png")
+    save_path = Path(config.sds_inpaint_dir) / "log.png"
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Save the visualization
