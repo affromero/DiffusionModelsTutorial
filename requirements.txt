@@ -2,6 +2,8 @@
 #    uv export --frozen --output-file=requirements.txt --no-hashes
 annotated-types==0.7.0
     # via pydantic
+asttokens==3.0.0
+    # via stack-data
 certifi==2025.4.26
     # via
     #   requests
@@ -15,18 +17,25 @@ click==8.2.1
 colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   click
+    #   ipython
     #   tqdm
     #   tyro
 contourpy==1.3.2
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
+decorator==5.2.1
+    # via ipython
 diffusers==0.33.1
     # via spaitialai
 distlib==0.3.9
     # via virtualenv
 docstring-parser==0.16
     # via tyro
+exceptiongroup==1.3.0 ; python_full_version < '3.11'
+    # via ipython
+executing==2.2.0
+    # via stack-data
 filelock==3.18.0
     # via
     #   diffusers
@@ -54,8 +63,16 @@ idna==3.10
     # via requests
 importlib-metadata==8.7.0
     # via diffusers
+ipython==8.37.0 ; python_full_version < '3.11'
+    # via spaitialai
+ipython==9.3.0 ; python_full_version >= '3.11'
+    # via spaitialai
+ipython-pygments-lexers==1.1.1 ; python_full_version >= '3.11'
+    # via ipython
 jaxtyping==0.3.2
     # via spaitialai
+jedi==0.19.2
+    # via ipython
 jinja2==3.1.6
     # via torch
 joblib==1.5.1
@@ -68,6 +85,8 @@ markupsafe==3.0.2
     # via jinja2
 matplotlib==3.10.3
     # via spaitialai
+matplotlib-inline==0.1.7
+    # via ipython
 mdurl==0.1.2
     # via markdown-it-py
 mpmath==1.3.0
@@ -122,6 +141,10 @@ packaging==25.0
     #   huggingface-hub
     #   matplotlib
     #   wandb
+parso==0.8.4
+    # via jedi
+pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
+    # via ipython
 pillow==11.2.1
     # via
     #   diffusers
@@ -134,10 +157,16 @@ platformdirs==4.3.8
     #   wandb
 pre-commit==4.2.0
     # via spaitialai
+prompt-toolkit==3.0.51
+    # via ipython
 protobuf==6.31.1
     # via wandb
 psutil==7.0.0
     # via wandb
+ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
+    # via pexpect
+pure-eval==0.2.3
+    # via stack-data
 pydantic==2.11.5
     # via
     #   spaitialai
@@ -145,7 +174,10 @@ pydantic==2.11.5
 pydantic-core==2.33.2
     # via pydantic
 pygments==2.19.1
-    # via rich
+    # via
+    #   ipython
+    #   ipython-pygments-lexers
+    #   rich
 pyparsing==3.2.3
     # via matplotlib
 python-dateutil==2.9.0.post0
@@ -163,7 +195,9 @@ requests==2.32.3
     #   huggingface-hub
     #   wandb
 rich==14.0.0
-    # via tyro
+    # via
+    #   spaitialai
+    #   tyro
 safetensors==0.5.3
     # via diffusers
 scikit-learn==1.7.0
@@ -180,6 +214,8 @@ six==1.17.0
     # via python-dateutil
 smmap==5.0.2
     # via gitdb
+stack-data==0.6.3
+    # via ipython
 sympy==1.14.0
     # via torch
 threadpoolctl==3.6.0
@@ -188,19 +224,27 @@ torch @ https://download.pytorch.org/whl/cu121/torch-2.4.1%2Bcu121-cp310-cp310-l
     # via
     #   spaitialai
     #   torchvision
+torchsummary==1.5.1
+    # via spaitialai
 torchvision @ https://download.pytorch.org/whl/cu121/torchvision-0.19.1%2Bcu121-cp310-cp310-linux_x86_64.whl
     # via spaitialai
 tqdm==4.67.1
     # via
     #   huggingface-hub
     #   spaitialai
+traitlets==5.14.3
+    # via
+    #   ipython
+    #   matplotlib-inline
 triton==3.0.0 ; python_full_version < '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux'
     # via torch
 typeguard==4.4.3
     # via tyro
 typing-extensions==4.14.0
     # via
+    #   exceptiongroup
     #   huggingface-hub
+    #   ipython
     #   pydantic
     #   pydantic-core
     #   rich
@@ -223,5 +267,7 @@ wadler-lindig==0.1.6
     # via jaxtyping
 wandb==0.20.1
     # via spaitialai
+wcwidth==0.2.13
+    # via prompt-toolkit
 zipp==3.22.0
     # via importlib-metadata

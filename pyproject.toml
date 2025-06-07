@@ -6,13 +6,16 @@ readme = "README.md"
 requires-python = ">=3.10.10"
 dependencies = [
   "diffusers>=0.33.1",
+  "ipython>=8.37.0",
   "jaxtyping>=0.3.2",
   "matplotlib>=3.10.3",
   "pillow>=11.2.1",
   "pre-commit>=4.2.0",
   "pydantic>=2.11.5",
+  "rich>=14.0.0",
   "scikit-learn>=1.7.0",
   "torch",
+  "torchsummary>=1.5.1",
   "torchvision",
   "tqdm>=4.67.1",
   "tyro>=0.9.24",

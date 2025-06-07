@@ -39,10 +39,10 @@ class ModelConfig:
     num_classes: int = 10  # MNIST digit classes (0-9)
 
     # U-Net architecture parameters
-    base_channels: int = 128  # Base channel count
+    base_channels: int = 64  # Base channel count
     channel_mults: tuple = (1, 2, 4)  # Channel multipliers for each level
     num_res_blocks: int = 2  # Residual blocks per level
-    attention_resolutions: tuple = (16, 8)  # Resolutions to apply attention
+    attention_resolutions: tuple = (8, 4)  # Resolutions to apply attention
     num_heads: int = 8  # Multi-head attention heads
     dropout: float = 0.1  # Dropout for regularization
 
