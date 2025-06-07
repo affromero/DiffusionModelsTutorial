@@ -100,7 +100,10 @@ class UNet(nn.Module, ModelConfig):
         self.downsample_blocks = nn.ModuleList()
 
         in_ch = self.base_channels
-        resolution = self.img_size
+        if len(set(self.img_size)) != 1:
+            msg = "All dimensions of img_size must be equal. This current implementation only supports square images."
+            raise ValueError(msg)
+        resolution = self.img_size[0]
 
         for level, out_ch in enumerate(channels):
             # ResNet blocks for this level
@@ -189,7 +192,7 @@ class UNet(nn.Module, ModelConfig):
                     )
 
                 # Add attention if at specified resolution
-                resolution = self.img_size // (2 ** (len(channels) - 1 - level))
+                resolution = self.img_size[0] // (2 ** (len(channels) - 1 - level))
                 if resolution in self.attention_resolutions:
                     blocks.append(AttentionBlock(_out_ch, self.num_heads))
 
@@ -212,14 +215,14 @@ class UNet(nn.Module, ModelConfig):
         self,
         x: Float[Tensor, "batch channels height width"],
         t: Int[Tensor, "batch"],  # type: ignore[name-defined]
-        y: Int[Tensor, "batch"],  # type: ignore[name-defined]
+        y: Int[Tensor, "batch"] | None = None,  # type: ignore[name-defined]
     ) -> Float[Tensor, "batch n height width"]:
         """Forward pass of the U-Net.
 
         Mathematical Background:
         The network computes ε_θ(x_t, t, y), the predicted noise that was
         added to the clean image x_0 to create the noisy image x_t at timestep t
-        for class y.
+        for class y. If y is None, computes unconditional noise prediction.
 
         The loss function during training is:
         L = ||ε - ε_θ(x_t, t, y)||²
@@ -227,15 +230,23 @@ class UNet(nn.Module, ModelConfig):
         Args:
             x: Noisy image x_t, shape (batch, channels, height, width)
             t: Timestep, shape (batch,) with values in [0, T-1]
-            y: Class label, shape (batch,) with values in [0, num_classes-1]
+            y: Class label, shape (batch,) with values in [0, num_classes-1].
+               If None, an unconditional prediction is made.
 
         Returns:
             Predicted noise ε_θ(x_t, t, y), same shape as input x
 
         """
         # Generate embeddings
-        t_emb = self.time_embed(t.squeeze().long())  # (batch, time_emb_dim)
-        y_emb = self.class_embed(y.squeeze().long())  # (batch, time_emb_dim)
+        t_emb = self.time_embed(t.view(-1).long())  # (batch, time_emb_dim)
+
+        if y is not None:
+            y_emb = self.class_embed(y.view(-1).long())  # (batch, time_emb_dim)
+        else:
+            # Use zeros for unconditional pass if y is None. Ensure correct device and dtype.
+            y_emb = torch.zeros(
+                x.shape[0], self.time_emb_dim, device=x.device, dtype=t_emb.dtype
+            )
 
         # Initial convolution
         x = self.conv_in(x)  # (batch, base_channels, height, width)

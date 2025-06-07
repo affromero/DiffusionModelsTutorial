@@ -10,3 +10,5 @@ wheels/
 .venv
 data/MNIST/
 .vscode/
+outputs/
+plots/

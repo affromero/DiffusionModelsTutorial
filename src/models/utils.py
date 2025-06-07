@@ -15,6 +15,16 @@ from jaxtyping import Float, Int
 from torch import Tensor, nn
 
 
+def create_mask(
+    image_size: tuple[int, int], box_size: int, position: tuple[int, int]
+) -> torch.Tensor:
+    """Create a binary mask for inpainting."""
+    mask = torch.zeros((1, 1, *image_size))
+    x, y = position
+    mask[:, :, y : y + box_size, x : x + box_size] = 1
+    return mask
+
+
 class SinusoidalPositionEmbeddings(nn.Module):
     """Sinusoidal position embeddings for timestep encoding.
 
