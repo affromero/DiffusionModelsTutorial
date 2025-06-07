@@ -3,13 +3,16 @@
 This file contains all hyperparameters and settings for the diffusion model training.
 """
 
+from dataclasses import field
 from typing import Literal
 
 import torch
 from pydantic.dataclasses import dataclass
+from torch.utils.data import DataLoader
+from torchvision import transforms
 
 
-@dataclass
+@dataclass(kw_only=True)
 class DiffusionConfig:
     """Configuration for the diffusion process.
 
@@ -26,7 +29,7 @@ class DiffusionConfig:
     cosine_s: float = 0.008  # Offset parameter for cosine schedule
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ModelConfig:
     """Configuration for the U-Net model architecture."""
 
@@ -35,8 +38,16 @@ class ModelConfig:
     time_emb_dim: int = 512  # Time embedding dimension
     num_classes: int = 10  # MNIST digit classes (0-9)
 
+    # U-Net architecture parameters
+    base_channels: int = 128  # Base channel count
+    channel_mults: tuple = (1, 2, 4)  # Channel multipliers for each level
+    num_res_blocks: int = 2  # Residual blocks per level
+    attention_resolutions: tuple = (16, 8)  # Resolutions to apply attention
+    num_heads: int = 8  # Multi-head attention heads
+    dropout: float = 0.1  # Dropout for regularization
 
-@dataclass
+
+@dataclass(kw_only=True)
 class TrainingConfig:
     """Configuration for training the diffusion model."""
 
@@ -54,28 +65,29 @@ class TrainingConfig:
     mixed_precision: bool = True  # 2x speedup on modern GPUs
     compile_model: bool = False  # torch.compile for PyTorch 2.0+
 
-    # Data loading
-    num_workers: int = 4  # Parallel data loading
-    pin_memory: bool = True  # Faster GPU transfer
 
-
-@dataclass
+@dataclass(kw_only=True)
 class DataConfig:
-    """Configuration for data loading and preprocessing.
+    """Configuration for data loading and preprocessing."""
 
-    Mathematical Background:
-    - normalize: Maps pixel values from [0,1] to [-1,1] for better training
-    - resize: 16x16 is optimal balance between quality and computation
-    """
-
-    train_val_data_root: str = "data/mnist_train_small.csv"  # Data directory
-    test_data_root: str = "data/mnist_test.csv"  # Data directory
+    data_root: str = "./data"  # Data directory
     resize: int = 16  # Target image size
     normalize_mean: float = 0.5  # For mapping [0,1] -> [-1,1]
     normalize_std: float = 0.5  # For mapping [0,1] -> [-1,1]
+    num_workers: int = 4  # Parallel data loading
+    pin_memory: bool = True  # Faster GPU transfer
+
+    train_transform: transforms.Compose = field(
+        init=False
+    )  # Transformation pipeline for training
+    val_transform: transforms.Compose = field(init=False)
+
+    train_dataloader: DataLoader = field(init=False)
+    val_dataloader: DataLoader = field(init=False)
+    test_dataloader: DataLoader = field(init=False)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class SamplingConfig:
     """Configuration for sampling from the trained model.
 
@@ -90,15 +102,15 @@ class SamplingConfig:
     guidance_scale: float = 1.0  # Classifier-free guidance (1.0 = no guidance)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Config:
     """Main configuration class combining all settings."""
 
-    diffusion: DiffusionConfig = DiffusionConfig()
-    model: ModelConfig = ModelConfig()
-    training: TrainingConfig = TrainingConfig()
-    data: DataConfig = DataConfig()
-    sampling: SamplingConfig = SamplingConfig()
+    diffusion: DiffusionConfig
+    model: ModelConfig
+    training: TrainingConfig
+    data: DataConfig
+    sampling: SamplingConfig
 
     # Device settings
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
