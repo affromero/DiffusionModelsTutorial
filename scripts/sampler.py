@@ -269,12 +269,16 @@ def run_sample(
     *,
     inpaint: bool = False,
     specific_class: int | None = None,
+    num_samples: int = 6,
 ) -> None:
     """Run sampling pipeline."""
     config = Config.load_pkl()
     config.scheduler = DDIMScheduler()
     args = SamplingArgs(
-        model_path=model_path, inpaint=inpaint, specific_class=specific_class
+        model_path=model_path,
+        inpaint=inpaint,
+        specific_class=specific_class,
+        num_samples=num_samples,
     )
     main(args, config)
 
