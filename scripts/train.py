@@ -28,7 +28,12 @@ from config import (
     TrainingConfig,
 )
 from src.data.dataset import create_data_loaders
-from src.diffusion.scheduler import DDIMScheduler, DDPMScheduler, PNDMScheduler
+from src.diffusion.scheduler import (
+    DDIMScheduler,
+    DDPMScheduler,
+    PNDMScheduler,
+    create_scheduler,
+)
 from src.models.unet import UNet
 from src.training.sampler import DiffusionSampler, create_class_grid_visualization
 from src.training.trainer import DiffusionTrainer
@@ -275,15 +280,18 @@ def main(args: TrainingArgs, config: Config) -> None:
 
 def run_train(
     dataset: Literal["mnist"] = "mnist",
+    diffusion_mode: Literal[
+        "score_matching", "flow_matching", "rectified_flow"
+    ] = "score_matching",
+    scheduler: Literal["ddpm", "pndm", "ddim"] = "ddpm",
     args: TrainingArgs = TrainingArgs(),  # noqa: B008 # not a fan of this tho
 ) -> None:
     """Run training pipeline."""
     if dataset == "mnist":
         config = Config(
-            scheduler=DDPMScheduler(),
+            scheduler=create_scheduler(scheduler),
             model=ModelConfig(),
-            training=TrainingConfig(diffusion_mode="score_matching"),
-            # training=TrainingConfig(diffusion_mode="flow_matching"),
+            training=TrainingConfig(diffusion_mode=diffusion_mode),
             data=DataConfig(),
             sampling=SamplingConfig(),
         )

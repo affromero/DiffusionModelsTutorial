@@ -111,6 +111,12 @@ Below is a more detailed view of the project's folder and file structure:
 
 ## Configuration (`config.py`)
 
+Key training and model parameters are defined in `config.py`. One important parameter is `TrainingConfig.diffusion_mode`, which can be set to:
+- `"score_matching"`: Standard Denoising Diffusion Probabilistic Models (DDPM) objective.
+- `"flow_matching"`: Learns the velocity field of a probability flow ODE, typically `x_1 - x_0` (noise - data).
+- `"rectified_flow"`: Aims to learn a simplified, often straight, path between noise and data distributions. The specific implementation in this project targets `x_0 - x_1` (data - noise). The prediction then produces reverse colored images.
+
+
 All experimental parameters, model configurations, training settings, and paths are managed centrally in `config.py`. This file uses Pydantic dataclasses for structured and type-checked configurations. Before running any script, you might want to review and adjust settings in `config.py` to suit your needs (e.g., batch size, learning rate, number of epochs, model architecture details, paths for saving outputs).
 
 ## Running the Code
@@ -130,7 +136,7 @@ The primary way to interact with this project is through the scripts located in 
 ### 2. Generating Samples
 
 -   **Script:** `scripts/sampler.py`
--   **Purpose:** Generates image samples from a trained diffusion model. Supports various modes including Classifier-Free Guidance (CFG), class-specific sampling, interpolation, and **a demonstration of inpainting on newly sampled images.**
+-   **Purpose:** Generates image samples from a trained diffusion model. It supports several generation modes: unconditional (generating random images from noise), conditional (generating images of specific classes if the model is class-conditional), and Classifier-Free Guidance (CFG) for enhanced class adherence and sample quality. Additionally, it can perform class-specific sampling, interpolation between classes, and **a demonstration of inpainting on newly sampled images.**
 -   **Key Command-Line Arguments:**
     -   `--model_path <path>`: Path to the trained model checkpoint. **Defaults to `outputs/models/best_model.pth`. Examples below assume this default.**
     -   `--num_samples <int>`: Number of samples per class (default: 6).
@@ -272,6 +278,7 @@ This section provides a brief reflection on the development process, highlightin
 *   **Further Model Exploration:**
     *   Experiment with different UNet architectures or attention mechanisms.
     *   Try latent diffusion models (LDMs) for more efficient training and sampling on higher-resolution images.
+    *   Explore Diffusion Transformers (DiT) as an alternative backbone architecture. DiTs replace the commonly used U-Net with a transformer, which has shown strong performance and scalability, potentially offering improvements in capturing global context and handling higher-resolution data more effectively.
 *   **Test Coverage:** Increase unit and integration test coverage to ensure robustness and facilitate easier refactoring.
 *   **Documentation Enhancement:** Add even more detailed docstrings, comments, and potentially Sphinx-generated API documentation.
 

@@ -121,7 +121,7 @@ class DiffusionTrainer(TrainingConfig):
             if diffusion_mode == "flow_matching":
                 return self._flow_matching_loss(x_t, x_0, x_1, t_discrete, y, loss_type)
             # rectified_flow
-            return self._rectified_flow_loss(x_t, x_0, t_discrete, y, loss_type)
+            return self._rectified_flow_loss(x_t, x_0, x_1, t_discrete, y, loss_type)
 
         msg = f"Unknown diffusion_mode: {diffusion_mode}"
         raise NotImplementedError(msg)
@@ -202,36 +202,63 @@ class DiffusionTrainer(TrainingConfig):
         self,
         x_t: Float[Tensor, "batch channels height width"],
         x_0: Float[Tensor, "batch channels height width"],
+        x_1: Float[Tensor, "batch channels height width"],
         t: Int[Tensor, "batch"],  # type: ignore[name-defined]
-        y: Int[Tensor, "batch"],  # type: ignore[name-defined]
+        y: Int[Tensor, "batch"] | None,  # type: ignore[name-defined]
         loss_type: str,
     ) -> Float[Tensor, ""]:
         """Rectified Flow loss (Liu et al. 2022).
 
         Mathematical Background:
-        For rectified flow with straight paths:
-        - Path: ψ_t(x) = (1-t)x_0 + t*x_1
-        - Target velocity: u_t(x) = x_0 - x_t = x_0 - ((1-t)x_0 + t*x_1)
-        - Simplified: u_t(x) = t*(x_0 - x_1)
-        - Loss: L = E_{t,x_0,x_1} [||v_θ(x_t, t, y) - u_t(x)||^p]
+        Rectified flow is different from flow matching in its formulation and goal.
 
-        The model learns to predict the vector field that transports
-        the current state x_t back towards the data x_0.
+        In rectified flow:
+        1. We define a REVERSE path from x_1 (noise) to x_0 (data)
+        2. The path is: z_t = t*x_0 + (1-t)*x_1, where t ∈ [0,1]
+        3. At t=0: z_0 = x_1 (pure noise)
+        4. At t=1: z_1 = x_0 (clean data)
+        5. The velocity field is: dz_t/dt = x_0 - x_1 (constant)
+
+        However, for training we use the SAME interpolation as flow matching:
+        x_t = (1-t)x_0 + t*x_1
+
+        But we predict a DIFFERENT velocity target:
+        - We want the model to predict the direction that takes us from the
+        current point x_t towards the clean data x_0
+
+        This is NOT simply x_0 - x_1. Instead:
+        - At any point x_t on the path, the "rectified" velocity should point
+        towards the data endpoint x_0
+        - This gives us the target: x_0 - x_t
+        - Substituting x_t = (1-t)x_0 + t*x_1:
+        v_target = x_0 - x_t = x_0 - [(1-t)x_0 + t*x_1] = t*(x_0 - x_1)
+
+        Loss: L = E_{t,x_0,x_1} [||v_θ(x_t, t, y) - t*(x_0 - x_1)||^2]
 
         Args:
-            x_t: Interpolated state at time t
-            x_0: Clean data
-            x_1: Pure noise (unused in target computation)
-            t: Timestep indices
-            y: Class labels
+            x_t: Interpolated state at time t: (1-t)x_0 + t*x_1
+            x_0: Clean data sample
+            x_1: Pure noise sample
+            t: Timestep indices (for model conditioning)
+            y: Class labels (can be None for unconditional)
             loss_type: "l1" or "l2" loss
 
         Returns:
             Loss value
 
         """
+        # Model predicts the velocity field
         v_pred = self.model(x_t, t, y)
-        v_target = x_0 - x_t  # Velocity field from current state to data
+
+        # Convert discrete timesteps back to continuous time for velocity computation
+        t_continuous = t.float() / (
+            self.scheduler.num_timesteps - 1
+        )  # Convert to [0,1]
+        t_expanded = t_continuous.view(-1, 1, 1, 1)
+
+        # Rectified flow target: t * (x_0 - x_1)
+        # This makes the velocity scale with time - small corrections near x_0, large near x_1
+        v_target = t_expanded * (x_0 - x_1)
 
         if loss_type == "l1":
             return F.l1_loss(v_pred, v_target)
