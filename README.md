@@ -266,6 +266,18 @@ This section provides a brief reflection on the development process, highlightin
 *   **Different Scheduler for Inpainting:** The inpainting script used a different scheduler (DDIM) than the training script (DDPM). This led to different noise schedules and could affect the quality of the inpainted results. To resolve this, the inpainting script was modified to use the same scheduler as the training script. I spent here a lot of time debugging the inpainting script thinking there was a bug due to the images looking saturated like with a clamping issue. After reading in the internet I found that DDIM is more suitable for inpainting tasks.
 *   **Linter and Mypy Errors:** Throughout development, `ruff` (for linting) and `mypy` (for type checking) were used. Addressing their feedback (e.g., unused variables, incorrect type hints, missing arguments in function calls) helped maintain code quality and catch potential bugs early. For instance, a Mypy error in `scripts/train.py` regarding `Config` instantiation was resolved by ensuring all required arguments were provided. See `.pre-commit-config.yaml` for more details.
 
+### Time Distribution and Project Scope
+
+This project was initially planned as a four-hour task. However, to deliver a more complete and functional solution, additional time was invested. The time was roughly distributed as follows:
+
+*   **Hours 1-2:** Setting up the foundational project structure, including the data loader for MNIST and the U-Net model architecture.
+*   **Hours 3-4:** Developing and experimenting with the core diffusion training pipeline. This involved implementing and testing three different diffusion modes for the loss function (`score_matching`, `flow_matching`, and `rectified_flow`).
+*   **Hours 5-6:** Implementing inpainting capabilities, initially exploring RePaint concepts and then focusing on Score Distillation Sampling (SDS) for guided inpainting.
+*   **Hours 7-8:** Migrating and adapting the core functionalities and findings from this standalone repository structure into a Jupyter Notebook format for demonstration and easier experimentation.
+
+While this extended beyond the initial four-hour scope, the goal was to provide a more robust and well-explored solution rather than a partially completed one.
+
+
 ### If I Had More Time
 
 *   **Advanced Inpainting Techniques:**
