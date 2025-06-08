@@ -78,23 +78,23 @@ class DDPMScheduler:
     """ Device to store tensors on. """
 
     # -- init=False --
-    betas: Float[Tensor, timesteps] = field(init=False)
+    betas: Float[Tensor, " timesteps"] = field(init=False)
     """ Noise schedule. """
-    alphas: Float[Tensor, timesteps] = field(init=False)
+    alphas: Float[Tensor, " timesteps"] = field(init=False)
     """ Signal retention factor. """
-    alphas_cumprod: Float[Tensor, timesteps] = field(init=False)
+    alphas_cumprod: Float[Tensor, " timesteps"] = field(init=False)
     """ Cumulative product of alphas. """
-    sqrt_alphas_cumprod: Float[Tensor, timesteps] = field(init=False)
+    sqrt_alphas_cumprod: Float[Tensor, " timesteps"] = field(init=False)
     """ Square root of cumulative product of alphas. """
-    sqrt_one_minus_alphas_cumprod: Float[Tensor, timesteps] = field(init=False)
+    sqrt_one_minus_alphas_cumprod: Float[Tensor, " timesteps"] = field(init=False)
     """ Square root of one minus cumulative product of alphas. """
-    sqrt_recip_alphas: Float[Tensor, timesteps] = field(init=False)
+    sqrt_recip_alphas: Float[Tensor, " timesteps"] = field(init=False)
     """ Square root of 1/alphas. """
-    posterior_variance: Float[Tensor, timesteps] = field(init=False)
+    posterior_variance: Float[Tensor, " timesteps"] = field(init=False)
     """ Posterior variance. """
-    posterior_mean_coef1: Float[Tensor, timesteps] = field(init=False)
+    posterior_mean_coef1: Float[Tensor, " timesteps"] = field(init=False)
     """ Coefficient for mean of posterior. """
-    posterior_mean_coef2: Float[Tensor, timesteps] = field(init=False)
+    posterior_mean_coef2: Float[Tensor, " timesteps"] = field(init=False)
     """ Coefficient for variance of posterior. """
 
     def __post_init__(self) -> None:
@@ -113,7 +113,7 @@ class DDPMScheduler:
 
     def _linear_beta_schedule(
         self, beta_start: float, beta_end: float
-    ) -> Float[Tensor, timesteps]:  # type: ignore[name-defined]
+    ) -> Float[Tensor, " timesteps"]:  # type: ignore[name-defined]
         """Linear beta schedule from DDPM paper.
 
         Mathematical Background:
@@ -126,7 +126,7 @@ class DDPMScheduler:
             beta_start, beta_end, self.num_timesteps, device=self.device
         )
 
-    def _cosine_beta_schedule(self, s: float = 0.008) -> Float[Tensor, timesteps]:  # type: ignore[name-defined]
+    def _cosine_beta_schedule(self, s: float = 0.008) -> Float[Tensor, " timesteps"]:  # type: ignore[name-defined]
         """Cosine beta schedule from "Improved Denoising Diffusion Probabilistic Models".
 
         Mathematical Background:
@@ -194,7 +194,7 @@ class DDPMScheduler:
     def q_sample(
         self,
         x_0: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
         noise: Float[Tensor, "batch channels height width"] = None,
     ) -> tuple[
         Float[Tensor, "batch channels height width"],
@@ -235,7 +235,7 @@ class DDPMScheduler:
     def predict_start_from_noise(
         self,
         x_t: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
         noise: Float[Tensor, "batch channels height width"],
     ) -> Float[Tensor, "batch channels height width"]:
         """Predict x_0 from x_t and predicted noise.
@@ -264,8 +264,8 @@ class DDPMScheduler:
         self,
         x_start: Float[Tensor, "batch channels height width"],
         x_t: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
-    ) -> tuple[Float[Tensor, "batch channels height width"], Float[Tensor, batch]]:  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
+    ) -> tuple[Float[Tensor, "batch channels height width"], Float[Tensor, " batch"]]:  # type: ignore[name-defined]
         """Compute the mean and variance of q(x_{t-1} | x_t, x_0).
 
         Mathematical Background:
@@ -296,9 +296,9 @@ class DDPMScheduler:
         self,
         model: unet.UNet,
         x_t: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
-        y: Int[Tensor, batch],  # type: ignore[name-defined]
-    ) -> tuple[Float[Tensor, "batch channels height width"], Float[Tensor, batch]]:  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
+        y: Int[Tensor, " batch"],  # type: ignore[name-defined]
+    ) -> tuple[Float[Tensor, "batch channels height width"], Float[Tensor, " batch"]]:  # type: ignore[name-defined]
         """Compute the mean and variance of p_θ(x_{t-1} | x_t).
 
         Mathematical Background:
@@ -337,8 +337,8 @@ class DDPMScheduler:
         self,
         model: unet.UNet,
         x_t: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
-        y: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
+        y: Int[Tensor, " batch"],  # type: ignore[name-defined]
     ) -> Float[Tensor, "batch channels height width"]:
         """Sample x_{t-1} from p_θ(x_{t-1} | x_t).
 
@@ -372,7 +372,7 @@ class DDPMScheduler:
         self,
         model: unet.UNet,
         shape: tuple[int, int, int, int],
-        y: Int[Tensor, batch],  # type: ignore[name-defined]
+        y: Int[Tensor, " batch"],  # type: ignore[name-defined]
     ) -> Float[Tensor, "batch channels height width"]:
         """Complete sampling loop from pure noise to clean images.
 
@@ -435,23 +435,23 @@ class DDIMScheduler:
     """Device to store tensors on."""
 
     # Consistent fields with DDPMScheduler for compatibility
-    betas: Float[Tensor, num_timesteps] = field(init=False)
+    betas: Float[Tensor, " num_timesteps"] = field(init=False)
     """Beta schedule."""
-    alphas: Float[Tensor, num_timesteps] = field(init=False)
+    alphas: Float[Tensor, " num_timesteps"] = field(init=False)
     """Alpha schedule."""
-    alphas_cumprod: Float[Tensor, num_timesteps] = field(init=False)
+    alphas_cumprod: Float[Tensor, " num_timesteps"] = field(init=False)
     """Alpha cumulative product."""
-    sqrt_alphas_cumprod: Float[Tensor, num_timesteps] = field(init=False)
+    sqrt_alphas_cumprod: Float[Tensor, " num_timesteps"] = field(init=False)
     """Square root of cumulative product of alphas."""
-    sqrt_one_minus_alphas_cumprod: Float[Tensor, num_timesteps] = field(init=False)
+    sqrt_one_minus_alphas_cumprod: Float[Tensor, " num_timesteps"] = field(init=False)
     """Square root of one minus cumulative product of alphas."""
-    sqrt_recip_alphas: Float[Tensor, num_timesteps] = field(init=False)
+    sqrt_recip_alphas: Float[Tensor, " num_timesteps"] = field(init=False)
     """Square root of 1/alphas."""
-    posterior_variance: Float[Tensor, num_timesteps] = field(init=False)
+    posterior_variance: Float[Tensor, " num_timesteps"] = field(init=False)
     """Posterior variance."""
-    posterior_mean_coef1: Float[Tensor, num_timesteps] = field(init=False)
+    posterior_mean_coef1: Float[Tensor, " num_timesteps"] = field(init=False)
     """Coefficient for mean of posterior."""
-    posterior_mean_coef2: Float[Tensor, num_timesteps] = field(init=False)
+    posterior_mean_coef2: Float[Tensor, " num_timesteps"] = field(init=False)
     """Coefficient for variance of posterior."""
     final_alpha_cumprod: float = field(init=False)
     """Final alpha cumulative product."""
@@ -539,7 +539,7 @@ class DDIMScheduler:
     def q_sample(
         self,
         x_0: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
         noise: Float[Tensor, "batch channels height width"] = None,
     ) -> tuple[
         Float[Tensor, "batch channels height width"],
@@ -563,7 +563,7 @@ class DDIMScheduler:
     def predict_start_from_noise(
         self,
         x_t: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
         noise: Float[Tensor, "batch channels height width"],
     ) -> Float[Tensor, "batch channels height width"]:
         """Predict x_0 from x_t and predicted noise - identical to DDPM."""
@@ -720,23 +720,23 @@ class PNDMScheduler:
     # Consistent fields with DDPMScheduler for compatibility
     ets: list[Tensor] = field(init=False)
     """List of previous noise predictions."""
-    betas: Float[Tensor, num_timesteps] = field(init=False)
+    betas: Float[Tensor, " num_timesteps"] = field(init=False)
     """Beta schedule."""
-    alphas: Float[Tensor, num_timesteps] = field(init=False)
+    alphas: Float[Tensor, " num_timesteps"] = field(init=False)
     """Alpha schedule."""
-    alphas_cumprod: Float[Tensor, num_timesteps] = field(init=False)
+    alphas_cumprod: Float[Tensor, " num_timesteps"] = field(init=False)
     """Alpha cumulative product."""
-    sqrt_alphas_cumprod: Float[Tensor, num_timesteps] = field(init=False)
+    sqrt_alphas_cumprod: Float[Tensor, " num_timesteps"] = field(init=False)
     """Square root of cumulative product of alphas."""
-    sqrt_one_minus_alphas_cumprod: Float[Tensor, num_timesteps] = field(init=False)
+    sqrt_one_minus_alphas_cumprod: Float[Tensor, " num_timesteps"] = field(init=False)
     """Square root of one minus cumulative product of alphas."""
-    sqrt_recip_alphas: Float[Tensor, num_timesteps] = field(init=False)
+    sqrt_recip_alphas: Float[Tensor, " num_timesteps"] = field(init=False)
     """Square root of 1/alphas."""
-    posterior_variance: Float[Tensor, num_timesteps] = field(init=False)
+    posterior_variance: Float[Tensor, " num_timesteps"] = field(init=False)
     """Posterior variance."""
-    posterior_mean_coef1: Float[Tensor, num_timesteps] = field(init=False)
+    posterior_mean_coef1: Float[Tensor, " num_timesteps"] = field(init=False)
     """Coefficient for mean of posterior."""
-    posterior_mean_coef2: Float[Tensor, num_timesteps] = field(init=False)
+    posterior_mean_coef2: Float[Tensor, " num_timesteps"] = field(init=False)
     """Coefficient for variance of posterior."""
 
     def __post_init__(self) -> None:
@@ -789,7 +789,7 @@ class PNDMScheduler:
     def q_sample(
         self,
         x_0: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
         noise: Float[Tensor, "batch channels height width"] = None,
     ) -> tuple[
         Float[Tensor, "batch channels height width"],
@@ -813,7 +813,7 @@ class PNDMScheduler:
     def predict_start_from_noise(
         self,
         x_t: Float[Tensor, "batch channels height width"],
-        t: Int[Tensor, batch],  # type: ignore[name-defined]
+        t: Int[Tensor, " batch"],  # type: ignore[name-defined]
         noise: Float[Tensor, "batch channels height width"],
     ) -> Float[Tensor, "batch channels height width"]:
         """Predict x_0 from x_t and predicted noise - identical to DDPM."""
