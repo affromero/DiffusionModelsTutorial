@@ -29,7 +29,7 @@ decorator==5.2.1
     #   ipdb
     #   ipython
 diffusers==0.33.1
-    # via spaitialai
+    # via diffusionmodelstutorial
 distlib==0.3.9
     # via virtualenv
 docstring-parser==0.16
@@ -64,23 +64,23 @@ identify==2.6.12
 idna==3.10
     # via requests
 imageio==2.37.0
-    # via spaitialai
+    # via diffusionmodelstutorial
 importlib-metadata==8.7.0
     # via diffusers
 ipdb==0.13.13
-    # via spaitialai
+    # via diffusionmodelstutorial
 ipython==8.37.0 ; python_full_version < '3.11'
     # via
+    #   diffusionmodelstutorial
     #   ipdb
-    #   spaitialai
 ipython==9.3.0 ; python_full_version >= '3.11'
     # via
+    #   diffusionmodelstutorial
     #   ipdb
-    #   spaitialai
 ipython-pygments-lexers==1.1.1 ; python_full_version >= '3.11'
     # via ipython
 jaxtyping==0.3.2
-    # via spaitialai
+    # via diffusionmodelstutorial
 jedi==0.19.2
     # via ipython
 jinja2==3.1.6
@@ -94,7 +94,7 @@ markdown-it-py==3.0.0
 markupsafe==3.0.2
     # via jinja2
 matplotlib==3.10.3
-    # via spaitialai
+    # via diffusionmodelstutorial
 matplotlib-inline==0.1.7
     # via ipython
 mdurl==0.1.2
@@ -159,16 +159,16 @@ pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
 pillow==11.2.1
     # via
     #   diffusers
+    #   diffusionmodelstutorial
     #   imageio
     #   matplotlib
-    #   spaitialai
     #   torchvision
 platformdirs==4.3.8
     # via
     #   virtualenv
     #   wandb
 pre-commit==4.2.0
-    # via spaitialai
+    # via diffusionmodelstutorial
 prompt-toolkit==3.0.51
     # via ipython
 protobuf==6.31.1
@@ -181,7 +181,7 @@ pure-eval==0.2.3
     # via stack-data
 pydantic==2.11.5
     # via
-    #   spaitialai
+    #   diffusionmodelstutorial
     #   wandb
 pydantic-core==2.33.2
     # via pydantic
@@ -208,12 +208,12 @@ requests==2.32.3
     #   wandb
 rich==14.0.0
     # via
-    #   spaitialai
+    #   diffusionmodelstutorial
     #   tyro
 safetensors==0.5.3
     # via diffusers
 scikit-learn==1.7.0
-    # via spaitialai
+    # via diffusionmodelstutorial
 scipy==1.15.3
     # via scikit-learn
 sentry-sdk==2.29.1
@@ -236,16 +236,16 @@ tomli==2.2.1 ; python_full_version < '3.11'
     # via ipdb
 torch==2.4.1+cu121
     # via
-    #   spaitialai
+    #   diffusionmodelstutorial
     #   torchvision
 torchsummary==1.5.1
-    # via spaitialai
+    # via diffusionmodelstutorial
 torchvision==0.19.1+cu121
-    # via spaitialai
+    # via diffusionmodelstutorial
 tqdm==4.67.1
     # via
+    #   diffusionmodelstutorial
     #   huggingface-hub
-    #   spaitialai
 traitlets==5.14.3
     # via
     #   ipython
@@ -270,7 +270,7 @@ typing-extensions==4.14.0
 typing-inspection==0.4.1
     # via pydantic
 tyro==0.9.24
-    # via spaitialai
+    # via diffusionmodelstutorial
 urllib3==2.4.0
     # via
     #   requests
@@ -280,7 +280,7 @@ virtualenv==20.31.2
 wadler-lindig==0.1.6
     # via jaxtyping
 wandb==0.20.1
-    # via spaitialai
+    # via diffusionmodelstutorial
 wcwidth==0.2.13
     # via prompt-toolkit
 zipp==3.22.0

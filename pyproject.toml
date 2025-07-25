@@ -1,7 +1,7 @@
 [project]
-name = "spaitialai"
+name = "DiffusionModelsTutorial"
 version = "0.1.0"
-description = "Add your description here"
+description = "Diffusion Models Tutorial"
 readme = "README.md"
 requires-python = ">=3.10.10"
 dependencies = [

@@ -1,1 +1,1 @@
-"""Core SpaitialAI package."""
+"""Core Tutorial package."""
