@@ -1,4 +1,6 @@
-# Machine Learning Take-Home Exercise: Diffusion Models and Inpainting
+# Diffusion Models and Inpainting
+
+This is a toy example using MNIST, so **no** latent diffusion, insted the diffusion is directly on the pixel level.
 
 ## Overview
 
